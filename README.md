@@ -1,78 +1,68 @@
 AI/ML Beginners Project
 # Music Genre Classification
 
-## Project Overview
-This project builds a Fake News Detection System trained on a dataset containing real and fake news articles. It uses TF-IDF vectorization and a Logistic Regression or Naive Bayes classifier to analyze the textual patterns of news content. The system is deployed with Streamlit for easy interaction — users can enter a news statement and instantly see if it’s fake or real, along with a confidence score.
+## Overview
+This project implements a machine learning pipeline to classify music tracks into genres using audio features extracted from audio files. The repository includes feature extraction, data preprocessing, model training and evaluation, and an optional Streamlit app for inference.
 
-## Key Features
-- Text preprocessing with cleaning, stopword removal, and lemmatization
-- TF-IDF vectorization for feature extraction
-- Model trained to achieve around 98–99% accuracy
-- Streamlit web interface for real-time predictions
-- Confidence score displayed for each prediction
-- Automatically loads a trained model (or trains one if not found)
+## Dataset
+Recommended dataset: GTZAN Music Genre Dataset
+Link : https://www.kaggle.com/datasets/carlthome/gtzan-genre-collection
+Typical structure:
+- 1000 audio files (30 seconds each)
+- 10 genres: blues, classical, country, disco, hiphop, jazz, metal, pop, reggae, rock
+Place the dataset so that each genre is a subfolder containing audio files (for example .au or .wav).
 
-## Why Some True Statements Are Flagged as Fake
-Short or overly simple sentences such as "Donald Trump is a president of America" may be predicted as fake because the model was trained mostly on full-length news articles. It assumes "fake" when:
-- The text resembles clickbait or incomplete statements seen in fake samples
-- The statement lacks journalistic context such as sources or structure
-- The model detects political figure mentions that often correlated with fake news in the dataset
+## Features Extracted
+Common audio features used:
+- MFCC (Mel-frequency cepstral coefficients)
+- Chroma features
+- Mel-spectrogram statistics
+- Spectral contrast
+- Tonnetz features
 
-To improve predictions, provide more context. For example:
-"Donald Trump served as the 45th President of the United States, according to official records."
-This provides linguistic structure and facts, which help the model classify more accurately.
+## Project Workflow
+1. Extract audio features from files using librosa.
+2. Build a feature matrix and label vector.
+3. Encode labels and scale features.
+4. Split data into training and test sets with stratified sampling.
+5. Train classical ML models (for example Random Forest).
+6. Evaluate using accuracy, precision, recall, F1-score, and confusion matrix.
+7. Save model artifacts: trained model, scaler, and label encoder.
+8. Optionally provide a Streamlit app for uploading an audio file and predicting genre.
 
-## Tech Stack
-- Python 3
-- Pandas, NumPy
-- NLTK (for stopwords and lemmatization)
-- Scikit-learn (for TF-IDF and model training)
-- Streamlit (for deployment)
-- Joblib (for saving/loading models)
-
-## Dataset 
-link : https://www.kaggle.com/datasets/clmentbisaillon/fake-and-real-news-dataset
-
-## Folder Structure
-Fake-News-Detection/
-│
-├── fake_news_detection.ipynb   # Model training and evaluation
-├── app.py                      # Streamlit application
-├── vectorizer.pkl              # Saved TF-IDF vectorizer
-├── model.pkl                   # Saved ML model
-├── true.csv                    # True news dataset
-├── fake.csv                    # Fake news dataset
-└── README.md                   # Project documentation
+## Requirements
+Install required Python packages:
+pip install librosa scikit-learn pandas numpy joblib matplotlib streamlit
 
 ## How to Run
-1. Install dependencies
-   pip install -r requirements.txt
+1. Ensure the GTZAN dataset is available and DATASET_PATH in the notebook matches your dataset location.
+2. Run the notebook cells in order to extract features, train the model, and save artifacts.
+3. To run the Streamlit app if included:
+streamlit run app.py
 
-2. Run the Streamlit app
-   streamlit run app.py
+## Repository Structure
+project/
+│
+├── dataset_folder/genre            (place GTZAN or other dataset here; genres as subfolders)
+├── main.ipynb             (Jupyter notebook with feature extraction, training, evaluation)
+├── music_genre_model.pkl      (saved trained model)
+├── music_scaler.pkl           (saved scaler for feature normalization)
+├── label_encoder.pkl          (saved label encoder mapping numeric labels to genre names)
+└── README.md                  (this file)
 
-3. Interact with the app  
-   Enter any news content and click "Check News" to get:
-   - Real or Fake label
-   - Confidence percentage
+## Results
+Baseline classical models such as Random Forest provide a reasonable baseline (for example around 70% accuracy on GTZAN with summarized features). Results will vary depending on preprocessing and model choices.
 
-## Model Performance
-Accuracy: 98.8%  
-Precision: 0.99  
-Recall: 0.99  
-F1-score: 0.99  
+## Notes and Tips
+- Feature extraction can be time consuming; save extracted features to disk for reuse.
+- Use consistent audio loading and preprocessing during inference and training.
+- For improved performance, consider deep learning on spectrogram images using CNNs.
+- Set random_state for reproducibility where applicable.
 
-## Example Predictions
-Input: "The U.S. Senate passed a new infrastructure bill on Tuesday."  
-Output: Real News (Confidence: 97%)
-
-Input: "NASA confirms Earth will go dark for 15 days next month."  
-Output: Fake News (Confidence: 99%)
-
-## Future Improvements
-- Add multiple ML models for comparison
-- Include article source verification
-- Integrate live fact-checking API
+## Future Work
+- Add explainability using SHAP for feature importance.
+- Implement batch prediction via file upload.
+- Explore deep learning approaches using spectrograms and convolutional neural networks.
 
 ## Contributing
 Contributions are welcome!
